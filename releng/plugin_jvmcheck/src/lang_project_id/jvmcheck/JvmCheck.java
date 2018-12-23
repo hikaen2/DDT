@@ -10,6 +10,9 @@
  *******************************************************************************/
 package lang_project_id.jvmcheck;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -20,20 +23,14 @@ import org.eclipse.ui.PlatformUI;
 public class JvmCheck implements IStartup, JvmCheckConstants_Actual {
 	
 	public static String getJavaVersionProperty() {
-		return System.getProperty("java.version");
+		return System.getProperty("java.specification.version");
 	}
 	
 	public static int getJavaVersion() {
-	    String versionProperty = getJavaVersionProperty();
-	    String[] versionSegments = versionProperty.split("\\.");
-	    
-	    if(versionSegments.length < 2) {
-	    	return -1;
-	    }
-	    String javaVersionStr = versionSegments[1];
-		
-	    try {
-			return Integer.parseInt(javaVersionStr);
+		Matcher m = Pattern.compile("^\\d*").matcher(getJavaVersionProperty());
+		m.find();
+		try {
+			return Integer.parseInt(m.group());
 		} catch(NumberFormatException e) {
 			return -1;
 		}
